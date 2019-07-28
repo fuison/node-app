@@ -1,11 +1,5 @@
 version: 0.2
 
-env:
-  variables:
-    REPOSITORY_URI: 847942115514.dkr.ecr.us-east-1.amazonaws.com/nodeapp
-    COMMIT_HASH: $(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-    IMAGE_TAG: build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
-
 phases:
   install:
     runtime-versions:
@@ -13,10 +7,9 @@ phases:
   pre_build:
     commands:
       - echo pre_build - Logging in to Amazon ECR...
-      - echo REPOSITORY_URI $REPOSITORY_URI
-      - echo COMMIT_HASH $COMMIT_HASH
-      - echo IMAGE_TAG $IMAGE_TAG
-      
+      - REPOSITORY_URI=077708451457.dkr.ecr.ap-south-1.amazonaws.com/node-app
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}   
 
   build:
     commands:
