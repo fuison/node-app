@@ -10,7 +10,11 @@ phases:
   install:
     runtime-versions:
       docker: 18
-  
+  pre_build:
+    commands:
+      - echo pre_build - Logging in to Amazon ECR...
+      
+
   build:
     commands:
       - echo Build started on `date`
