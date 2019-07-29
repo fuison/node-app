@@ -21,7 +21,7 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
-      - docker build -t $DOCKER_NAME .
+      - docker build -t /ismailhi/MyDocker .
 
   post_build:
     commands:
