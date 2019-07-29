@@ -6,8 +6,7 @@ phases:
       docker: 18
   pre_build:
     commands:
-      - echo pre_build Logging in to Amazon ECR...
-      - REPOSITORY_URI: 077708451457.dkr.ecr.ap-south-1.amazonaws.com/node-app
+      - echo pre_build Logging in to Amazon ECR      
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=$(COMMIT_HASH:=latest)
 
