@@ -1,9 +1,11 @@
 version: 0.2
 
 env:
-   variables:
-     REPOSITORY_URI: 077708451457.dkr.ecr.ap-south-1.amazonaws.com/node-app
-     DOCKER_NAME: /ismailhi/MyDocker
+  variables:
+    AWS_DEFAULT_REGION: us-east-1
+    AWS_ACCOUNT_ID: 847942115514
+    IMAGE_TAG: latest
+    IMAGE_REPO_NAME: 847942115514.dkr.ecr.us-east-1.amazonaws.com/nodeapp
 
 phases:
   install:
@@ -12,24 +14,23 @@ phases:
 
   pre_build:
     commands:
-      - echo pre_build - Logging in to Amazon ECR...
-      - echo REPOSITORY_URI $REPOSITORY_URI
-      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - IMAGE_TAG=${COMMIT_HASH:=latest}   
-
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)      
+      
   build:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...
-      - docker build -t /ismailhi/MyDocker .
-
+      - docker build -t $IMAGE_REPO_NAME:$IMAGE_TAG .        
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
   post_build:
     commands:
       - echo Build completed on `date`
       - echo Pushing the Docker images...
-      - docker push /ismailhi/MyDocker      
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG     
       - echo Writing image definitions file...
-      - printf '[{"name":"nodeapp","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+      - printf '[{"name":"nodeapp","imageUri":"%s"}]' $IMAGE_REPO_NAME:$IMAGE_TAG > imagedefinitions.json
       - cat imagedefinitions.json 
 artifacts:
     files: imagedefinitions.json
